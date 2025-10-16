@@ -3,23 +3,15 @@ import logging
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from project.presentation.api.authentication.authentication_routes import (
-    router as auth_router,
-)
-from project.presentation.api.case_management.case_management_routes import (
-    router as case_management_router,
-)
-from project.presentation.api.upload_evidences.upload_evidences_routes import (
-    router as upload_evidences_router,
-)
-from runtime_settings import (
-    FASTAPI_API_PREFIX,
-    FASTAPI_DEBUG,
-    FASTAPI_DESCRIPTION,
-    FASTAPI_OPENAPI_URL,
-    FASTAPI_TITLE,
-    FASTAPI_VERSION,
-)
+from project.core.config import (FASTAPI_API_PREFIX, FASTAPI_DEBUG,
+                                 FASTAPI_DESCRIPTION, FASTAPI_OPENAPI_URL,
+                                 FASTAPI_TITLE, FASTAPI_VERSION)
+from project.presentation.api.authentication.authentication_routes import \
+    router as auth_router
+from project.presentation.api.case_management.case_management_routes import \
+    router as case_management_router
+from project.presentation.api.upload_evidences.upload_evidences_routes import \
+    router as upload_evidences_router
 
 logger = logging.getLogger("uvicorn")
 logging.basicConfig(level=logging.INFO)

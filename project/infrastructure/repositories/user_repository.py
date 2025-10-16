@@ -1,6 +1,7 @@
 from sqlalchemy import select
 
-from project.application.interfaces.user_repository_interface import IUserRepository
+from project.application.interfaces.user_repository_interface import \
+    IUserRepository
 from project.domain.entities import UserEntity
 from project.infrastructure.database.models import UserModel
 

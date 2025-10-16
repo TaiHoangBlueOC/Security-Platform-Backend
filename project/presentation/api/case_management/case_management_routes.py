@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from project.application.dto.processing_file_dto import (CreateCaseRequest,
+                                                         CreateCaseResponse)
 from project.application.use_cases.create_case import CreateCaseUseCase
 from project.infrastructure.database.session import get_async_db
 from project.infrastructure.repositories.case_repository import CaseRepository
-from project.presentation.dependencies.authentication_dependency import get_user_info
-from project.presentation.dto.processing_file_dto import (
-    CreateCaseRequest,
-    CreateCaseResponse,
-)
+from project.presentation.dependencies.authentication_dependency import \
+    get_user_info
 
 router = APIRouter(prefix="/cases", tags=["Case Management"])
 

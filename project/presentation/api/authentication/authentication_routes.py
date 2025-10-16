@@ -1,18 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from project.application.dto.auth_dto import (LoginRequest, LoginResponse,
+                                              RegisterRequest,
+                                              RegisterResponse, UserResponse)
 from project.application.use_cases.login_user import LoginUserUseCase
 from project.application.use_cases.register_user import RegisterUserUseCase
 from project.domain.entities import UserEntity
 from project.infrastructure.database.session import get_async_db
 from project.infrastructure.repositories.user_repository import UserRepository
-from project.presentation.dependencies.authentication_dependency import get_user_info
-from project.presentation.dto.auth_dto import (
-    LoginRequest,
-    LoginResponse,
-    RegisterRequest,
-    RegisterResponse,
-    UserResponse,
-)
+from project.presentation.dependencies.authentication_dependency import \
+    get_user_info
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
