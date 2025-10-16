@@ -3,7 +3,15 @@ import logging
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from project.presentation.api.authentication.authentication_routes import router
+from project.presentation.api.authentication.authentication_routes import (
+    router as auth_router,
+)
+from project.presentation.api.case_management.case_management_routes import (
+    router as case_management_router,
+)
+from project.presentation.api.upload_evidences.upload_evidences_routes import (
+    router as upload_evidences_router,
+)
 from runtime_settings import (
     FASTAPI_API_PREFIX,
     FASTAPI_DEBUG,
@@ -30,8 +38,6 @@ origins = [
     "http://localhost:8099",
 ]
 
-# app.add_middleware(JWTAuthenticationMiddleware)
-# app.add_middleware(SetSessionIdMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -41,8 +47,9 @@ app.add_middleware(
 )
 
 
-app.include_router(router)
-# FastAPIInstrumentor.instrument_app(app)
+app.include_router(auth_router)
+app.include_router(case_management_router)
+app.include_router(upload_evidences_router)
 
 
 @app.on_event("startup")

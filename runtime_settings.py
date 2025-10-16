@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -32,3 +33,12 @@ FASTAPI_API_PREFIX = os.getenv("FASTAPI_API_PREFIX", "/api/v1")
 APP_NAME = os.getenv("APP_NAME", "Security Platform")
 APP_VERSION = os.getenv("APP_VERSION", "0.1.0")
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
+
+# --- Processing Evidence Configuration ---
+UPLOAD_DIRECTORY = os.getenv("UPLOAD_DIRECTORY", ".uploads")
+os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
+
+# --- Celery Configuration ---
+CELERY_NAME = os.getenv("CELERY_NAME", "security_platform_worker")
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")

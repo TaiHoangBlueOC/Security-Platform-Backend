@@ -1,20 +1,16 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-
+from project.infrastructure.database.models import *
 from runtime_settings import (
-    SECURITY_PLATFORM_POSTGRES_USER_NAME,
-    SECURITY_PLATFORM_POSTGRES_PASSWORD,
-    SECURITY_PLATFORM_POSTGRES_HOST,
-    SECURITY_PLATFORM_POSTGRES_PORT,
     SECURITY_PLATFORM_POSTGRES_DATABASE,
+    SECURITY_PLATFORM_POSTGRES_HOST,
+    SECURITY_PLATFORM_POSTGRES_PASSWORD,
+    SECURITY_PLATFORM_POSTGRES_PORT,
+    SECURITY_PLATFORM_POSTGRES_USER_NAME,
 )
-
-from project.infrastructure.database import models
-from project.infrastructure.database.session import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

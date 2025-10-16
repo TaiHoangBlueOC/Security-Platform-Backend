@@ -1,0 +1,7 @@
+sender,receiver,payload
+alice,bob,Hello Bob!
+bob,alice,Hi Alice!
+charlie,dave,Meeting at 10am
+dave,charlie,Got it!
+eve,frank,Report attached
+frank,eve,Thanks!

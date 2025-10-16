@@ -16,5 +16,10 @@ class LoginUserUseCase:
         if not verify_password(password, user.hashed_password):
             raise ValueError("Invalid email or password")
 
-        token = create_access_token({"sub": user.username})
+        payload = {
+            "sub": str(user.id),
+            "username": user.username,
+        }
+
+        token = create_access_token(payload)
         return LoginResponse(access_token=token)
