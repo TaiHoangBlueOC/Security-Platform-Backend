@@ -1,9 +1,10 @@
 import uuid
 from datetime import UTC, datetime
 
-from project.application.interfaces.user_repository_interface import IUserRepository
+from project.application.interfaces.user_repository_interface import \
+    IUserRepository
+from project.application.utils.hashing import hash_password
 from project.domain.entities import UserEntity
-from project.infrastructure.security.hashing import hash_password
 
 
 class RegisterUserUseCase:

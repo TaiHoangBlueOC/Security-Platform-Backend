@@ -1,6 +1,6 @@
+from project.application.utils.jwt_handler import decode_access_token
 from project.domain.entities import UserEntity
 from project.infrastructure.repositories.user_repository import IUserRepository
-from project.infrastructure.security.jwt_handler import decode_access_token
 
 
 class GetUserInfoUseCase:

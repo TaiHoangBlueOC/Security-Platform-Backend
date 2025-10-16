@@ -2,9 +2,8 @@ from typing import List
 
 from sqlalchemy import select
 
-from project.application.interfaces.process_file_repository_interface import (
-    ICaseRepository,
-)
+from project.application.interfaces.case_repository_interface import \
+    ICaseRepository
 from project.domain.entities import CaseEntity
 from project.infrastructure.database.models import CaseModel
 

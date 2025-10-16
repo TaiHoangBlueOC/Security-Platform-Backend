@@ -1,7 +1,8 @@
-from project.application.interfaces.user_repository_interface import IUserRepository
-from project.infrastructure.security.hashing import verify_password
-from project.infrastructure.security.jwt_handler import create_access_token
-from project.presentation.dto.auth_dto import LoginResponse
+from project.application.dto.auth_dto import LoginResponse
+from project.application.interfaces.user_repository_interface import \
+    IUserRepository
+from project.application.utils.hashing import verify_password
+from project.application.utils.jwt_handler import create_access_token
 
 
 class LoginUserUseCase:
