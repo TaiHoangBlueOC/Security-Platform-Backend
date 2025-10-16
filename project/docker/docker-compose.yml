@@ -1,0 +1,66 @@
+services:
+  db:
+    image: postgres:15
+    container_name: security_platform_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123!
+      POSTGRES_DB: security_platform_backend
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: project/docker/Dockerfile
+    container_name: security_platform_backend
+    restart: always
+    env_file:
+      - ../../.env
+    ports:
+      - "8099:8099"
+    depends_on:
+      - db
+
+  redis:
+    image: redis:7
+    container_name: security_platform_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  celery_worker:
+    build:
+      context: ../..
+      dockerfile: project/docker/Dockerfile
+    container_name: security_platform_worker
+    restart: always
+    depends_on:
+      - redis
+      - db
+      - backend
+    env_file:
+      - ../../.env
+    volumes:
+      - ../..:/app
+      - ../../uploads:/app/uploads
+    command: celery_tasks -A project.celery_tasks.worker.celery_tasks worker --loglevel=info --concurrency=2
+
+  flower:
+    image: mher/flower
+    container_name: security_platform_flower
+    restart: always
+    depends_on:
+      - redis
+      - celery_worker
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    ports:
+      - "5555:5555"
+
+volumes:
+  db_data:

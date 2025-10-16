@@ -1,8 +1,6 @@
-from jose import JWTError, jwt
-
 from project.domain.entities import UserEntity
 from project.infrastructure.repositories.user_repository import IUserRepository
-from runtime_settings import JWT_ALGORITHM, JWT_SECRET_KEY
+from project.infrastructure.security.jwt_handler import decode_access_token
 
 
 class GetUserInfoUseCase:
@@ -10,16 +8,9 @@ class GetUserInfoUseCase:
         self.user_repo = user_repo
 
     async def execute(self, token: str) -> UserEntity:
-        """Decode JWT and return the associated user."""
-        try:
-            payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-            username: str = payload.get("sub")
-            if username is None:
-                raise ValueError("Invalid token: missing email claim")
-        except JWTError:
-            raise ValueError("Invalid or expired token")
+        payload = decode_access_token(token)
 
-        user = await self.user_repo.get_by_username(username)
+        user = await self.user_repo.get_by_username(payload["username"])
         if user is None:
             raise ValueError("User not found")
 

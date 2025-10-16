@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from project.application.use_cases.login_user import LoginUserUseCase
 from project.application.use_cases.register_user import RegisterUserUseCase
 from project.domain.entities import UserEntity
-from project.infrastructure.database.session import get_db
+from project.infrastructure.database.session import get_async_db
 from project.infrastructure.repositories.user_repository import UserRepository
 from project.presentation.dependencies.authentication_dependency import get_user_info
 from project.presentation.dto.auth_dto import (
@@ -18,7 +18,9 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register")
-async def register_user(data: RegisterRequest, db=Depends(get_db)) -> RegisterResponse:
+async def register_user(
+    data: RegisterRequest, db=Depends(get_async_db)
+) -> RegisterResponse:
     repo = UserRepository(db)
     use_case = RegisterUserUseCase(repo)
 
@@ -32,7 +34,7 @@ async def register_user(data: RegisterRequest, db=Depends(get_db)) -> RegisterRe
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login_user(data: LoginRequest, db=Depends(get_db)):
+async def login_user(data: LoginRequest, db=Depends(get_async_db)):
     repo = UserRepository(db)
     login_use_case = LoginUserUseCase(repo)
 

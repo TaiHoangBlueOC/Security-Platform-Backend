@@ -3,7 +3,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from project.application.use_cases.get_user_info import GetUserInfoUseCase
 from project.domain.entities import UserEntity
-from project.infrastructure.database.session import get_db
+from project.infrastructure.database.session import get_async_db
 from project.infrastructure.repositories.user_repository import UserRepository
 
 bearer_schema = HTTPBearer()
@@ -11,7 +11,7 @@ bearer_schema = HTTPBearer()
 
 async def get_user_info(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_schema),
-    db=Depends(get_db),
+    db=Depends(get_async_db),
 ) -> UserEntity:
     """
     Extract JWT token from Authorization header and return the current logged-in user.
