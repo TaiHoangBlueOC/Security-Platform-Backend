@@ -2,24 +2,20 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from project.core.config import (SECURITY_PLATFORM_POSTGRES_DATABASE,
-                                 SECURITY_PLATFORM_POSTGRES_HOST,
-                                 SECURITY_PLATFORM_POSTGRES_PASSWORD,
-                                 SECURITY_PLATFORM_POSTGRES_PORT,
-                                 SECURITY_PLATFORM_POSTGRES_USER_NAME)
+from project.core.config import settings
 
 DATABASE_ASYNC_URL = (
-    f"postgresql+asyncpg://"
-    f"{SECURITY_PLATFORM_POSTGRES_USER_NAME}:{SECURITY_PLATFORM_POSTGRES_PASSWORD}@"
-    f"{SECURITY_PLATFORM_POSTGRES_HOST}:{SECURITY_PLATFORM_POSTGRES_PORT}/"
-    f"{SECURITY_PLATFORM_POSTGRES_DATABASE}"
+    f"{settings.database.type}+{settings.database.async_driver}://"
+    f"{settings.database.username}:{settings.database.password}@"
+    f"{settings.database.host}:{settings.database.port}/"
+    f"{settings.database.database}"
 )
 
 DATABASE_SYNC_URL = (
-    f"postgresql+psycopg2://"
-    f"{SECURITY_PLATFORM_POSTGRES_USER_NAME}:{SECURITY_PLATFORM_POSTGRES_PASSWORD}@"
-    f"{SECURITY_PLATFORM_POSTGRES_HOST}:{SECURITY_PLATFORM_POSTGRES_PORT}/"
-    f"{SECURITY_PLATFORM_POSTGRES_DATABASE}"
+    f"{settings.database.type}+{settings.database.sync_driver}://"
+    f"{settings.database.username}:{settings.database.password}@"
+    f"{settings.database.host}:{settings.database.port}/"
+    f"{settings.database.database}"
 )
 
 # Create engine
@@ -34,22 +30,10 @@ AsyncSessionLocal = sessionmaker(
     autoflush=False,
     autocommit=False,
 )
+
 SessionLocal = sessionmaker(
     bind=sync_engine,
     autocommit=False,
     autoflush=False,
     expire_on_commit=False,
 )
-
-
-async def get_async_db():
-    async with AsyncSessionLocal() as session:
-        yield session
-
-
-def get_sync_db():
-    db = SessionLocal()
-    try:
-        return db
-    finally:
-        db.close()

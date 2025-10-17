@@ -1,41 +1,24 @@
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from alembic import context
-from project.infrastructure.database.models import *
-from runtime_settings import (
-    SECURITY_PLATFORM_POSTGRES_DATABASE,
-    SECURITY_PLATFORM_POSTGRES_HOST,
-    SECURITY_PLATFORM_POSTGRES_PASSWORD,
-    SECURITY_PLATFORM_POSTGRES_PORT,
-    SECURITY_PLATFORM_POSTGRES_USER_NAME,
-)
+from project.core.config import settings
+from project.infrastructure.database.models import Base
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
 config = context.config
 
-# Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your dto's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-DB_USER = SECURITY_PLATFORM_POSTGRES_USER_NAME
-DB_PASSWORD = SECURITY_PLATFORM_POSTGRES_PASSWORD
-DB_HOST = SECURITY_PLATFORM_POSTGRES_HOST
-DB_PORT = SECURITY_PLATFORM_POSTGRES_PORT
-DB_NAME = SECURITY_PLATFORM_POSTGRES_DATABASE
+DB_USER = settings.database.username
+DB_PASSWORD = settings.database.password
+DB_HOST = settings.database.host
+DB_PORT = settings.database.port
+DB_NAME = settings.database.database
 
 config.set_main_option(
     "sqlalchemy.url",
@@ -59,8 +42,11 @@ def run_migrations_offline() -> None:
     context.configure(
         url=url,
         target_metadata=target_metadata,
+        include_schemas=True,  # <--- ✅ include schemas
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+        compare_server_default=True,
     )
 
     with context.begin_transaction():
@@ -81,7 +67,14 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            include_schemas=True,  # <--- ✅ include schemas
+            compare_type=True,
+            compare_server_default=True,
+            render_as_batch=True,
+        )
 
         with context.begin_transaction():
             context.run_migrations()
