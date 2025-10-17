@@ -31,8 +31,11 @@ class ParseEvidencesUseCase:
         evidence_entity = EvidenceEntity(
             id=uuid.uuid4(),
             case_id=case_id,
-            file_path=file_path,
+            source=file_path,
             status=EvidenceStatus.PROCESSING,
+            format="csv",
+            metadata={"original_filename": os.path.basename(file_path)},
+            attributes=["sender", "receiver", "payload"],
         )
         self.evidence_repository.create(evidence_entity)
         print(f"Started parsing file: {file_path}")

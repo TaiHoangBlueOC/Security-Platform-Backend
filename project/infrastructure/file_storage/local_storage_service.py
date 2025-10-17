@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from project.application.interfaces.file_storage_interface import IFileStorage
-from project.core.config import UPLOAD_DIRECTORY
+from project.core.config import settings
 
 
 class LocalFileStorage(IFileStorage):
@@ -11,7 +11,7 @@ class LocalFileStorage(IFileStorage):
         try:
             for file in files:
                 file_path = os.path.abspath(
-                    os.path.join(UPLOAD_DIRECTORY, file.filename)
+                    os.path.join(settings.evidence.upload_directory, file.filename)
                 )
                 file_path = file_path.replace(
                     "\\", "/"

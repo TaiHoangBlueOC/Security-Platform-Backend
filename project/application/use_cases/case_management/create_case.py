@@ -1,8 +1,10 @@
 import uuid
 
+from project.application.dto.processing_file_dto import (CaseResponse,
+                                                         CreateCaseRequest)
 from project.application.interfaces.case_repository_interface import \
     ICaseRepository
-from project.domain.entities import CaseEntity, UserEntity
+from project.domain.entities import CaseEntity
 from project.domain.enums import CaseStatus
 
 
@@ -11,15 +13,16 @@ class CreateCaseUseCase:
         self.file_repo = file_repo
 
     async def execute(
-        self, title: str, description: str, slug: str, user: UserEntity
-    ) -> CaseEntity:
+        self, case_request: CreateCaseRequest, user_id: uuid.UUID
+    ) -> CaseResponse:
+
         case_entity = CaseEntity(
             id=uuid.uuid4(),
-            user_id=user.id,
-            title=title,
+            user_id=user_id,
+            title=case_request.title,
             status=CaseStatus.OPEN,
-            description=description,
-            slug=slug,
+            description=case_request.description,
+            slug=case_request.slug,
         )
 
         return await self.file_repo.create_case(case_entity)

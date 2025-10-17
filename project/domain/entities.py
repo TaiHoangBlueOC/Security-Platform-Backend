@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict
 from uuid import UUID
 
-from project.domain.enums import EvidenceStatus
+from project.domain.enums import CaseStatus, EvidenceStatus, UserRole
 
 
 @dataclass
@@ -10,6 +11,7 @@ class UserEntity:
     id: UUID
     username: str
     hashed_password: str
+    role: UserRole
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
@@ -19,9 +21,10 @@ class CaseEntity:
     id: UUID
     user_id: UUID
     title: str
-    status: str
+    status: CaseStatus
     description: str | None = None
     slug: str | None = None
+    summary: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
@@ -30,9 +33,11 @@ class CaseEntity:
 class EvidenceEntity:
     id: UUID
     case_id: UUID
-    file_path: str
+    source: str
     status: EvidenceStatus
-    description: str | None = None
+    format: str
+    metadata: Dict[str, Any]
+    attributes: list[str]
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
@@ -48,3 +53,63 @@ class MessageEntity:
     embeddings: list[float] | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
+
+
+@dataclass
+class CaseGroupEntity:
+    id: UUID
+    title: str
+    description: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+@dataclass
+class CaseGroupAssociationEntity:
+    id: UUID
+    case_id: UUID
+    group_id: UUID
+    created_at: datetime | None = None
+
+
+@dataclass
+class ProfileEntity:
+    id: UUID
+    user_id: UUID
+    first_name: str
+    last_name: str
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+@dataclass
+class UserGroupEntity:
+    id: UUID
+    name: str
+    description: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+@dataclass
+class UserGroupAssociationEntity:
+    id: UUID
+    user_id: UUID
+    group_id: UUID
+    created_at: datetime | None = None
+
+
+@dataclass
+class SharedCaseUserEntity:
+    id: UUID
+    case_id: UUID
+    user_id: UUID
+    created_at: datetime | None = None
+
+
+@dataclass
+class SharedCaseGroupEntity:
+    id: UUID
+    case_id: UUID
+    group_id: UUID
+    created_at: datetime | None = None

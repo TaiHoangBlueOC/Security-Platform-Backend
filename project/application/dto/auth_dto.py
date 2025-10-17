@@ -3,16 +3,14 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from project.domain.enums import UserRole
+
 
 class RegisterRequest(BaseModel):
     username: str
     password: str
-
-
-class RegisterResponse(BaseModel):
-    id: uuid.UUID
-    username: str
-    created_at: datetime
+    first_name: str
+    last_name: str
 
 
 class LoginRequest(BaseModel):
@@ -28,5 +26,12 @@ class LoginResponse(BaseModel):
 class UserResponse(BaseModel):
     id: uuid.UUID
     username: str
+    first_name: str
+    last_name: str
     created_at: datetime
     updated_at: datetime | None = None
+
+
+class UserInternal(UserResponse):
+    role: UserRole
+    hashed_password: str
