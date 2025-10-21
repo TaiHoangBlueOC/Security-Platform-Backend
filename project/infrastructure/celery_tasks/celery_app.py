@@ -1,7 +1,6 @@
 from celery import Celery
 
-from project.application.interfaces.job_dispatcher_interface import \
-    IJobDispatcher
+from project.application.interfaces.job_dispatcher_interface import IJobDispatcher
 from project.core.config import settings
 
 celery = Celery(

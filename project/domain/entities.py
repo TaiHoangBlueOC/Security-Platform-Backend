@@ -1,9 +1,19 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from project.domain.enums import CaseStatus, EvidenceStatus, UserRole
+
+
+@dataclass
+class ProfileEntity:
+    id: UUID
+    user_id: UUID
+    first_name: str
+    last_name: str
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @dataclass
@@ -12,21 +22,9 @@ class UserEntity:
     username: str
     hashed_password: str
     role: UserRole
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
-
-
-@dataclass
-class CaseEntity:
-    id: UUID
-    user_id: UUID
-    title: str
-    status: CaseStatus
-    description: str | None = None
-    slug: str | None = None
-    summary: str | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    profile: ProfileEntity = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @dataclass
@@ -37,9 +35,23 @@ class EvidenceEntity:
     status: EvidenceStatus
     format: str
     metadata: Dict[str, Any]
-    attributes: list[str]
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    attributes: List[str]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
+@dataclass
+class CaseEntity:
+    id: UUID
+    user_id: UUID
+    title: str
+    status: CaseStatus
+    description: Optional[str] = None
+    slug: Optional[str] = None
+    summary: Optional[str] = None
+    evidences: List[EvidenceEntity] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @dataclass
@@ -50,45 +62,39 @@ class MessageEntity:
     receiver: str
     payload: str
     status: EvidenceStatus
-    embeddings: list[float] | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    embeddings: List[float] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @dataclass
-class CaseGroupEntity:
+class CollectionEntity:
     id: UUID
+    user_id: UUID
     title: str
-    description: str | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    description: Optional[str] = None
+    cases: List[CaseEntity] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @dataclass
-class CaseGroupAssociationEntity:
+class CaseCollectionAssociationEntity:
     id: UUID
     case_id: UUID
     group_id: UUID
-    created_at: datetime | None = None
+    created_at: Optional[datetime] = None
 
 
 @dataclass
-class ProfileEntity:
-    id: UUID
-    user_id: UUID
-    first_name: str
-    last_name: str
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
-
-
-@dataclass
-class UserGroupEntity:
+class GroupEntity:
     id: UUID
     name: str
-    description: str | None = None
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
+    created_by: UUID
+    members: List[UserEntity] = field(default_factory=list)
+    cases: List[CaseEntity] = field(default_factory=list)
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 @dataclass
@@ -96,7 +102,7 @@ class UserGroupAssociationEntity:
     id: UUID
     user_id: UUID
     group_id: UUID
-    created_at: datetime | None = None
+    created_at: Optional[datetime] = None
 
 
 @dataclass
@@ -104,7 +110,7 @@ class SharedCaseUserEntity:
     id: UUID
     case_id: UUID
     user_id: UUID
-    created_at: datetime | None = None
+    created_at: Optional[datetime] = None
 
 
 @dataclass
@@ -112,4 +118,4 @@ class SharedCaseGroupEntity:
     id: UUID
     case_id: UUID
     group_id: UUID
-    created_at: datetime | None = None
+    created_at: Optional[datetime] = None

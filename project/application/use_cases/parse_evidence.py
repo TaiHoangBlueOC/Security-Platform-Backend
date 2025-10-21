@@ -2,8 +2,9 @@ import csv
 import os
 import uuid
 
-from project.application.interfaces.evidence_repository_interface import \
-    IEvidenceRepository
+from project.application.interfaces.evidence_repository_interface import (
+    IEvidenceRepository,
+)
 from project.domain.entities import EvidenceEntity, MessageEntity
 from project.domain.enums import EvidenceStatus
 
@@ -24,7 +25,7 @@ class ParseEvidencesUseCase:
             return {"error": f"File not found: {file_path}"}
 
         buffer = []
-        batch_size = 500
+        batch_size = 50000
         total = 0
 
         # Create Evidence record with status "Processing"

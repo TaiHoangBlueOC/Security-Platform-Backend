@@ -2,15 +2,23 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
+from project.application.exceptions.exceptions import BaseAppException
 from project.core.config import settings
-from project.presentation.api.authentication.authentication_routes import \
-    router as auth_router
-from project.presentation.api.case_management.case_management_routes import \
-    router as case_management_router
-from project.presentation.api.upload_evidences.upload_evidences_routes import \
-    router as upload_evidences_router
+from project.presentation.api.authentication.authentication_routes import (
+    router as auth_router,
+)
+from project.presentation.api.case_management.case_management_routes import (
+    router as case_management_router,
+)
+from project.presentation.api.group_management.group_management_routes import (
+    router as group_management_router,
+)
+from project.presentation.api.upload_evidences.upload_evidences_routes import (
+    router as upload_evidences_router,
+)
 
 logger = logging.getLogger("uvicorn")
 logging.basicConfig(level=logging.INFO)
@@ -49,6 +57,7 @@ app.add_middleware(
 
 
 app.include_router(auth_router)
+app.include_router(group_management_router)
 app.include_router(case_management_router)
 app.include_router(upload_evidences_router)
 
@@ -59,6 +68,12 @@ async def startup_event():
     logger.info(f"Service Title: {settings.fastapi.title}")
     logger.info(f"Service Version: {settings.fastapi.version}")
     logger.info(f"Service Description: {settings.fastapi.description}")
+
+
+@app.exception_handler(BaseAppException)
+async def app_exception_handler(request, exc):
+    logger.error("Application error: %s", exc.message)
+    return JSONResponse(status_code=exc.status_code, content={"error": exc.message})
 
 
 if __name__ == "__main__":
