@@ -1,8 +1,8 @@
 import uuid
 
 from sqlalchemy import JSON, UUID, Column, DateTime, ForeignKey, String, func
-from sqlalchemy.orm import (backref, declarative_base, declarative_mixin,
-                            relationship)
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.orm import backref, declarative_base, declarative_mixin, relationship
 
 from project.domain.enums import UserRole
 
@@ -58,6 +58,12 @@ class CaseModel(CommonModelMixin, Base):
         "EvidenceModel", backref="case", cascade="all, delete-orphan"
     )
 
+    collections = relationship(
+        "CollectionModel",
+        secondary=f"{schema_name}.case_collection_associations",
+        back_populates="cases",
+    )
+
 
 class EvidenceModel(CommonModelMixin, Base):
     __tablename__ = "evidences"
@@ -67,6 +73,8 @@ class EvidenceModel(CommonModelMixin, Base):
     source = Column(String, nullable=False)
     format = Column(String, nullable=False)
     status = Column(String, nullable=False)
+    metadata_json = Column("metadata", JSONB, nullable=True)
+    attributes = Column(ARRAY(String), nullable=True)
 
 
 class MessageModel(CommonModelMixin, Base):
@@ -83,12 +91,49 @@ class MessageModel(CommonModelMixin, Base):
     embeddings = Column(JSON, nullable=True)
 
 
-class CaseGroupModel(CommonModelMixin, Base):
-    __tablename__ = "case_groups"
+class CollectionModel(CommonModelMixin, Base):
+    __tablename__ = "collections"
     __table_args__ = schema_args
 
+    user_id = Column(UUID, ForeignKey(f"{schema_name}.users.id"), nullable=False)
     title = Column(String, nullable=False)
     description = Column(String, nullable=True)
+
+    cases = relationship(
+        "CaseModel",
+        secondary=f"{schema_name}.case_collection_associations",
+    )
+
+
+class CaseCollectionAssociationModel(CommonModelMixin, Base):
+    __tablename__ = "case_collection_associations"
+    __table_args__ = schema_args
+
+    case_id = Column(UUID, ForeignKey(f"{schema_name}.cases.id"), nullable=False)
+    collection_id = Column(
+        UUID, ForeignKey(f"{schema_name}.collections.id"), nullable=False
+    )
+
+
+class GroupModel(CommonModelMixin, Base):
+    __tablename__ = "groups"
+    __table_args__ = schema_args
+
+    name = Column(String, nullable=False)
+    created_by = Column(UUID, ForeignKey(f"{schema_name}.users.id"), nullable=False)
+
+    members = relationship(
+        "UserModel",
+        secondary=f"{schema_name}.user_group_associations",
+    )
+
+
+class UserGroupAssociationModel(CommonModelMixin, Base):
+    __tablename__ = "user_group_associations"
+    __table_args__ = schema_args
+
+    user_id = Column(UUID, ForeignKey(f"{schema_name}.users.id"), nullable=False)
+    group_id = Column(UUID, ForeignKey(f"{schema_name}.groups.id"), nullable=False)
 
 
 class SharedCaseUserModel(CommonModelMixin, Base):
@@ -97,3 +142,11 @@ class SharedCaseUserModel(CommonModelMixin, Base):
 
     case_id = Column(UUID, ForeignKey(f"{schema_name}.cases.id"), nullable=False)
     user_id = Column(UUID, ForeignKey(f"{schema_name}.users.id"), nullable=False)
+
+
+class SharedCaseGroupModel(CommonModelMixin, Base):
+    __tablename__ = "shared_case_groups"
+    __table_args__ = schema_args
+
+    case_id = Column(UUID, ForeignKey(f"{schema_name}.cases.id"), nullable=False)
+    group_id = Column(UUID, ForeignKey(f"{schema_name}.groups.id"), nullable=False)

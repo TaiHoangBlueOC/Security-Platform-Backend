@@ -1,8 +1,7 @@
 from project.application.use_cases.parse_evidence import ParseEvidencesUseCase
+from project.dependencies.database_dependency import get_sync_db
 from project.infrastructure.celery_tasks.celery_app import celery
-from project.infrastructure.database.session import get_sync_db
-from project.infrastructure.repositories.evidence_repository import \
-    EvidenceRepository
+from project.infrastructure.repositories.evidence_repository import EvidenceRepository
 
 
 @celery.task(name="parse_evidence_file")

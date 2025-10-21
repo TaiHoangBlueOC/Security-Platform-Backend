@@ -3,8 +3,7 @@ from typing import List
 from fastapi import UploadFile
 
 from project.application.interfaces.file_storage_interface import IFileStorage
-from project.application.interfaces.job_dispatcher_interface import \
-    IJobDispatcher
+from project.application.interfaces.job_dispatcher_interface import IJobDispatcher
 
 
 class UploadEvidencesUseCase:

@@ -2,8 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from project.application.dto.auth_dto import UserInternal
-from project.application.interfaces.user_repository_interface import \
-    IUserRepository
+from project.application.interfaces.user_repository_interface import IUserRepository
 from project.domain.entities import ProfileEntity, UserEntity
 from project.infrastructure.database.models import ProfileModel, UserModel
 

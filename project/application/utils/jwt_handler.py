@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 
 from jose import JWTError, jwt
 
-from project.application.exceptions.JWTException import JWTDecodeError
+from project.application.exceptions.exceptions import AuthenticationException
 from project.core.config import settings
 
 
@@ -24,4 +24,4 @@ def decode_access_token(token: str):
         )
         return payload
     except JWTError as e:
-        raise JWTDecodeError("Invalid or expired token") from e
+        raise AuthenticationException("Invalid or expired token") from e

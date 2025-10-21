@@ -1,2 +1,0 @@
-class JWTDecodeError(Exception):
-    pass
